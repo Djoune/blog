@@ -2,29 +2,50 @@
 
 namespace App\Controller;
 
+use App\Repository\ArticleRepository;
+use App\Repository\CategoryRepository;
+use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 
 class BlogController extends AbstractController
 {
+    /**
+     * @var CategoryRepository
+     */
+    private $repository;
+    /**
+     * @var ObjectManager
+     */
+    private $manager;
+    /**
+     * @var ArticleRepository
+     */
+    private $articleRepository;
 
     /**
-     * @Route("blog/{slug}", requirements={"slug" = "[a-z0-9-]+"}, name="blog_show")
-     * @param null $slug
-     * @return \Symfony\Component\HttpFoundation\Response
+     * BlogController constructor.
+     * @param CategoryRepository $repository
+     * @param ArticleRepository $articleRepository
+     * @param ObjectManager $manager
      */
-    public function show($slug = null)
+    public function __construct(CategoryRepository $repository, ArticleRepository $articleRepository, ObjectManager $manager)
     {
-        $slug = ucwords($slug);
 
-        if ($slug != null) {
-            $slug = str_replace("-", " ", $slug);
-        } else {
-            $slug = "Article Sans Titre";
-        }
+        $this->repository = $repository;
+        $this->manager = $manager;
+        $this->articleRepository = $articleRepository;
+    }
 
-        return $this->render('blog/index.html.twig', [
-            'slug' => $slug,
+    /**
+     * @Route("/blog", name="blog_category")
+     */
+    public function showCategories()
+    {
+        $categories = $this->repository->findAll();
+
+        return $this->render('blog/show.html.twig', [
+            'categories' => $categories,
         ]);
     }
 }
