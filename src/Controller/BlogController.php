@@ -2,9 +2,7 @@
 
 namespace App\Controller;
 
-use App\Entity\Article;
 use App\Entity\Category;
-use App\Form\ArticleSearchType;
 use App\Form\CategoryType;
 use App\Repository\ArticleRepository;
 use App\Repository\CategoryRepository;
