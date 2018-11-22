@@ -5,14 +5,31 @@
 {% block stylesheets %}{% endblock %}
 
 {% block body %}
-    <h1>All articles from article's table : </h1>
-    {% for article in articles %}
-        <div>
-            <h2>{{ loop.index }} / {{ article.title }} - Category : {{ article.category.name }}</h2>
-            <p>{{ article.content }}</p>
+
+    <div class="container">
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">
+                {{ message }}
+            </div>
+        {% endfor %}
+
+        <h1>All articles from article's table : </h1>
+
+        <div class="my-5">
+            <a href="{{ path('category_new') }}" class="btn btn-primary">Créer une catégorie</a>
         </div>
-    {% endfor %}
-    <a href="{{ path('home') }}">
-        Back to homepage.
-    </a>
+
+        <section id="article">
+            {% for article in articles %}
+                <div>
+                    <h2>{{ loop.index }} / {{ article.title }} - Category : {{ article.category.name }}</h2>
+                    <p>{{ article.content }}</p>
+                </div>
+            {% endfor %}
+            <a href="{{ path('home') }}">
+                Back to homepage.
+            </a>
+        </section>
+    </div>
+
 {% endblock %}

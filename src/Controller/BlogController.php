@@ -4,10 +4,14 @@ namespace App\Controller;
 
 use App\Entity\Article;
 use App\Entity\Category;
+use App\Form\ArticleSearchType;
+use App\Form\CategoryType;
 use App\Repository\ArticleRepository;
 use App\Repository\CategoryRepository;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 
@@ -67,7 +71,7 @@ class BlogController extends AbstractController
      *     defaults={"slug" = null},
      *     name="blog_show")
      */
-    public function show($slug)
+/*    public function show($slug)
     {
         if (!$slug) {
             throw $this
@@ -96,7 +100,7 @@ class BlogController extends AbstractController
                 'slug' => $slug
             ]
         );
-    }
+    }*/
 
     /**
      * Selecting all articles by category
@@ -112,6 +116,30 @@ class BlogController extends AbstractController
         return $this->render('blog/category.html.twig', [
             'category' => $categories,
             'articles' => $articles
+        ]);
+    }
+
+    /**
+     * @Route ("/category", name="category_new")
+     * @param Request $request
+     * @return Response
+     */
+    public function newCategory(Request $request): Response
+    {
+        $category = new Category();
+        $form = $this->createForm(CategoryType::class, $category);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->manager->persist($category);
+            $this->manager->flush();
+            $this->addFlash('success', 'Catégorie créée avec succès');
+            return $this->redirectToRoute('blog_index');
+        }
+
+        return $this->render('blog/newCategory.html.twig', [
+            'category' => $category,
+            'form'     => $form->createView()
         ]);
     }
 }
