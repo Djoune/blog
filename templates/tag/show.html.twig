@@ -1,34 +1,19 @@
+{# templates/blog/category.html.twig #}
 {% extends 'base.html.twig' %}
 
-{% block title %}Tag{% endblock %}
+{% block title %}{{ tag.name }}{% endblock %}
+
+{% block stylesheets %}{% endblock %}
 
 {% block body %}
-    <div class="container">
-        <div class="row my-5">
-            <h1 class="col">Tag</h1>
-            <a class="text-right" href="{{ path('tag_index') }}">back to list</a>
-        </div>
-
-        <table class="table table-striped">
-            <thead>
-            <tr>
-                <th>Id</th>
-                <th>Name</th>
-                <th>Action</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <td>{{ tag.id }}</td>
-                <td>{{ tag.name }}</td>
-                <td>
-                    <a class="btn btn-success" href="{{ path('tag_edit', {'id': tag.id}) }}">edit</a>
-                </td>
-            </tr>
-            </tbody>
-        </table>
+    <h1>Article according to this tag : {{ tag.name }}.</h1>
+    <br>
+    {% for article in articles %}
         <div>
-            {{ include('tag/_delete_form.html.twig') }}
+            <p>Id : {{ article.id }} - <a href="{{ path('article_show', {'id': article.id}) }}"> {{ article.title }}</a></p>
         </div>
-    </div>
+    {% endfor %}
+    <a href="{{ path('homepage') }}">
+        Back to homepage.
+    </a>
 {% endblock %}

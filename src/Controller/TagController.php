@@ -4,19 +4,61 @@ namespace App\Controller;
 
 use App\Entity\Tag;
 use App\Form\TagType;
+use App\Repository\ArticleRepository;
+use App\Repository\CategoryRepository;
 use App\Repository\TagRepository;
+use Doctrine\Common\Persistence\ObjectManager;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/tag")
+ * @Route("tag")
  */
 class TagController extends AbstractController
 {
     /**
+     * @var CategoryRepository
+     */
+    private $categoryRepository;
+
+    /**
+     * @var ObjectManager
+     */
+    private $manager;
+
+    /**
+     * @var ArticleRepository
+     */
+    private $articleRepository;
+
+    /**
+     * @var TagRepository
+     */
+    private $tagRepository;
+
+    /**
+     * BlogController constructor.
+     * @param CategoryRepository $categoryRepository
+     * @param ArticleRepository $articleRepository
+     * @param TagRepository $tagRepository
+     * @param ObjectManager $manager
+     */
+    public function __construct(CategoryRepository $categoryRepository, ArticleRepository $articleRepository, TagRepository $tagRepository, ObjectManager $manager)
+    {
+        $this->categoryRepository = $categoryRepository;
+        $this->manager = $manager;
+        $this->articleRepository = $articleRepository;
+        $this->tagRepository = $tagRepository;
+    }
+
+
+    /**
      * @Route("/", name="tag_index", methods="GET")
+     * @param TagRepository $tagRepository
+     * @return Response
      */
     public function index(TagRepository $tagRepository): Response
     {
@@ -25,6 +67,8 @@ class TagController extends AbstractController
 
     /**
      * @Route("/new", name="tag_new", methods="GET|POST")
+     * @param Request $request
+     * @return Response
      */
     public function new(Request $request): Response
     {
@@ -47,15 +91,27 @@ class TagController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", name="tag_show", methods="GET")
+     * Show articles according to tag
+     *
+     * @Route("/{tag}", name="blog_show_tag")
+     * @ParamConverter("tag", options={"mapping": {"tag": "name"}})
+     * @param Tag $tag
+     * @return                     Response A response instance
      */
-    public function show(Tag $tag): Response
+    public function showByTag(Tag $tag)
     {
-        return $this->render('tag/show.html.twig', ['tag' => $tag]);
+        return $this->render(
+            'tag/show.html.twig', [
+            'tag' => $tag,
+            'articles' => $tag->getArticles()
+        ]);
     }
 
     /**
      * @Route("/{id}/edit", name="tag_edit", methods="GET|POST")
+     * @param Request $request
+     * @param Tag $tag
+     * @return Response
      */
     public function edit(Request $request, Tag $tag): Response
     {
@@ -76,6 +132,9 @@ class TagController extends AbstractController
 
     /**
      * @Route("/{id}", name="tag_delete", methods="DELETE")
+     * @param Request $request
+     * @param Tag $tag
+     * @return Response
      */
     public function delete(Request $request, Tag $tag): Response
     {

@@ -24,6 +24,16 @@
                 <th>Category</th>
                 <td>{{ article.category.name }}</td>
             </tr>
+            <tr>
+                <th>Tag</th>
+                <td>{% for tag in tags %}
+                        <li>
+                            <a href="{{ path('blog_show_tag', {'tag': tag.name}) }}"> {{ tag.name }}</a>
+                        </li>
+                    {% else %}
+                        <li>No tags for this article</li>
+                    {% endfor %}</td>
+            </tr>
         </tbody>
     </table>
 

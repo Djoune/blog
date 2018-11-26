@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Article;
+use App\Entity\Tag;
 use App\Form\ArticleType;
 use App\Repository\ArticleRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -57,7 +58,12 @@ class ArticleController extends AbstractController
      */
     public function show(Article $article): Response
     {
-        return $this->render('article/show.html.twig', ['article' => $article]);
+        $tags = $article->getTags();
+        return $this->render('article/show.html.twig', [
+
+            'article' => $article,
+            'tags' =>$tags
+        ]);
     }
 
     /**
