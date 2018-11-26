@@ -22,6 +22,9 @@ class CategoryFixtures extends Fixture
         'DevOps'
     ];
 
+    /**
+     * @param ObjectManager $manager
+     */
     public function load(ObjectManager $manager)
     {
         foreach ($this->categories as $key => $categoryName) {
